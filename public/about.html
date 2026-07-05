@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About — Expense Tracker</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<nav>
+  <span class="brand">💰 Expense Tracker</span>
+  <a href="/">Home</a>
+  <a href="/expenses">Expenses</a>
+  <a href="/dashboard">Dashboard</a>
+  <a href="/about" class="active">About</a>
+</nav>
+
+<main>
+  <div class="card">
+    <h1>About this project</h1>
+    <p>
+      A small Expense Tracker app used as a vehicle to demonstrate DevOps
+      automation concepts for an MCA Semester 4 seminar. The app itself is
+      intentionally simple — the focus is the pipeline around it.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Pipeline stages (.github/workflows/ci.yml)</h2>
+    <div class="pipeline">
+      <div class="step"><div class="n">1</div>Lint<br><span style="color:#999">ESLint checks code style</span></div>
+      <div class="step"><div class="n">2</div>Test<br><span style="color:#999">Jest + Supertest run automated tests</span></div>
+      <div class="step"><div class="n">3</div>Build<br><span style="color:#999">Docker image built with commit metadata</span></div>
+      <div class="step"><div class="n">4</div>Push<br><span style="color:#999">Image pushed to Docker Hub registry</span></div>
+      <div class="step"><div class="n">5</div>Deploy<br><span style="color:#999">Render auto-pulls and deploys the new image</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Why this counts as DevOps automation</h2>
+    <p>
+      No step above is run by hand. A single <code>git push</code> to the
+      <code>main</code> branch triggers everything: tests must pass before an
+      image is even built, the image is tagged with the exact commit it came
+      from, and the live site updates itself — which is exactly what the
+      <a href="/dashboard">Dashboard</a> page is there to prove.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Tech stack</h2>
+    <p>
+      <b>Runtime:</b> Node.js 18, Express<br>
+      <b>Testing:</b> Jest, Supertest<br>
+      <b>Linting:</b> ESLint<br>
+      <b>Containerization:</b> Docker (multi-stage build)<br>
+      <b>CI/CD:</b> GitHub Actions<br>
+      <b>Hosting:</b> Render (free tier, deploys straight from a Docker image)
+    </p>
+  </div>
+</main>
+
+<footer>DevOps Pipeline: Git → GitHub Actions (CI) → Docker (Build) → Deploy</footer>
+
+</body>
+</html>

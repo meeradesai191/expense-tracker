@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker — Home</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<nav>
+  <span class="brand">💰 Expense Tracker</span>
+  <a href="/" class="active">Home</a>
+  <a href="/expenses">Expenses</a>
+  <a href="/dashboard">Dashboard</a>
+  <a href="/about">About</a>
+</nav>
+
+<main>
+  <div class="card">
+    <span class="badge">MCA SEM 4 — SEMINAR DEMO</span>
+    <h1 style="margin-top:12px">DevOps Automation — Live Demo</h1>
+    <p>
+      An Expense Tracker app built to demonstrate a complete DevOps automation
+      pipeline: source control, continuous integration, containerization and
+      continuous deployment — all working together end to end.
+    </p>
+    <a class="btn" href="/expenses">Open the Expense Tracker →</a>
+  </div>
+
+  <div class="card">
+    <h2>App features</h2>
+    <p>
+      Add, edit and delete expenses · search and filter by category · sort by
+      amount or date · export all data as CSV · set a monthly budget with a
+      live over-budget warning · category-wise spend chart.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>What this demo proves</h2>
+    <div class="pipeline">
+      <div class="step"><div class="n">🧑‍💻</div>Code pushed to <b>GitHub</b></div>
+      <div class="step"><div class="n">✅</div>GitHub Actions runs <b>lint + tests</b> automatically</div>
+      <div class="step"><div class="n">🐳</div>App is packaged as a <b>Docker image</b></div>
+      <div class="step"><div class="n">🚀</div>Image is <b>deployed live</b> with zero manual steps</div>
+    </div>
+    <p style="margin-top:14px">
+      Every time new code is pushed to the <code>main</code> branch, this exact
+      pipeline runs automatically — see it live on the
+      <a href="/dashboard">Dashboard</a> page, which shows the current build's
+      git commit and deploy time pulled straight from the running container.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Tech stack</h2>
+    <p>Node.js · Express · Jest (testing) · ESLint (linting) · Docker · GitHub Actions · Render (hosting)</p>
+  </div>
+</main>
+
+<footer>DevOps Pipeline: Git → GitHub Actions (CI) → Docker (Build) → Deploy</footer>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  expense-tracker:
+    build:
+      context: .
+      args:
+        GIT_COMMIT: local-compose
+        BUILD_TIME: manual
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Expense Tracker</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<nav>
+  <span class="brand">💰 Expense Tracker</span>
+  <a href="/">Home</a>
+  <a href="/expenses">Expenses</a>
+  <a href="/dashboard" class="active">Dashboard</a>
+  <a href="/about">About</a>
+</nav>
+
+<main>
+  <div class="card">
+    <h1><span class="status-dot"></span>Live deployment status</h1>
+    <p>
+      Read directly from the running server's environment variables — the
+      commit hash and build time are injected automatically by the CI/CD
+      pipeline when the Docker image is built. Refresh after a new deploy to
+      see it change, without touching any code here.
+    </p>
+    <div class="meta-grid" id="metaGrid">
+      <div class="meta-item"><div class="lbl">App version</div><div class="val" id="mVersion">loading…</div></div>
+      <div class="meta-item"><div class="lbl">Environment</div><div class="val" id="mEnv">loading…</div></div>
+      <div class="meta-item"><div class="lbl">Git commit</div><div class="val" id="mCommit">loading…</div></div>
+      <div class="meta-item"><div class="lbl">Build time</div><div class="val" id="mBuild">loading…</div></div>
+      <div class="meta-item"><div class="lbl">Node.js version</div><div class="val" id="mNode">loading…</div></div>
+      <div class="meta-item"><div class="lbl">Server uptime</div><div class="val" id="mUptime">loading…</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Monthly budget</h2>
+    <div class="form-row">
+      <input type="number" id="budgetInput" placeholder="Set monthly budget (₹)" min="0" step="1" style="flex:2" />
+      <button class="btn" onclick="saveBudget()">Save</button>
+    </div>
+    <div class="bar-row" style="margin-top:8px">
+      <span class="bar-label" id="budgetSpentLbl">₹0</span>
+      <div class="bar-track"><div class="bar-fill" id="budgetFill" style="width:0%"></div></div>
+      <span class="bar-amt" id="budgetTotalLbl">₹0</span>
+    </div>
+    <p id="budgetMsg" style="margin-top:8px"></p>
+  </div>
+
+  <div class="card">
+    <h2>Spending by category</h2>
+    <div id="chart"></div>
+    <p id="topCategoryMsg" style="margin-top:10px"></p>
+  </div>
+
+  <div class="card">
+    <h2>How this proves the pipeline works</h2>
+    <p>
+      During the GitHub Actions run, the workflow reads the current commit SHA
+      and timestamp and passes them into <code>docker build --build-arg</code>.
+      The Dockerfile bakes those values in as environment variables, so the
+      values above always describe exactly which commit is currently live —
+      no manual updating, no guessing.
+    </p>
+  </div>
+</main>
+
+<footer>DevOps Pipeline: Git → GitHub Actions (CI) → Docker (Build) → Deploy</footer>
+
+<script>
+  async function loadMeta() {
+    try {
+      const res = await fetch('/api/meta');
+      const { data } = await res.json();
+      document.getElementById('mVersion').textContent = data.version;
+      document.getElementById('mEnv').textContent = data.environment;
+      document.getElementById('mCommit').textContent = data.commit;
+      document.getElementById('mBuild').textContent = data.buildTime;
+      document.getElementById('mNode').textContent = data.nodeVersion;
+      document.getElementById('mUptime').textContent = data.uptimeSeconds + ' sec';
+    } catch (e) {
+      document.getElementById('metaGrid').innerHTML = '<p>Could not load metadata.</p>';
+    }
+  }
+
+  async function loadChart() {
+    const res = await fetch('/api/expenses/summary');
+    const { data } = await res.json();
+    const chart = document.getElementById('chart');
+    const max = Math.max(1, ...data.byCategory.map(c => c.total));
+
+    if (data.total === 0) {
+      chart.innerHTML = '<p style="color:#ccc;font-size:13px">No expenses yet — add some on the Expenses page.</p>';
+    } else {
+      chart.innerHTML = data.byCategory.map(c => `
+        <div class="bar-row">
+          <span class="bar-label">${c.category}</span>
+          <div class="bar-track"><div class="bar-fill" style="width:${(c.total / max) * 100}%"></div></div>
+          <span class="bar-amt">₹${c.total.toFixed(0)}</span>
+        </div>
+      `).join('');
+
+      const top = data.byCategory.slice().sort((a, b) => b.total - a.total)[0];
+      document.getElementById('topCategoryMsg').textContent =
+        top.total > 0 ? `You spend the most on ${top.category} (₹${top.total.toFixed(0)}).` : '';
+    }
+
+    // Budget bar
+    document.getElementById('budgetInput').value = data.budget;
+    document.getElementById('budgetSpentLbl').textContent = '₹' + data.total.toFixed(0);
+    document.getElementById('budgetTotalLbl').textContent = '₹' + data.budget.toFixed(0);
+    document.getElementById('budgetFill').style.width = Math.min(100, data.budgetUsedPercent) + '%';
+    document.getElementById('budgetFill').style.background = data.overBudget ? '#e63946' : '#fca311';
+    document.getElementById('budgetMsg').textContent = data.overBudget
+      ? `⚠ You are ₹${(data.total - data.budget).toFixed(0)} over your monthly budget.`
+      : `${data.budgetUsedPercent}% of monthly budget used.`;
+  }
+
+  async function saveBudget() {
+    const budget = document.getElementById('budgetInput').value;
+    if (!budget) return;
+    await fetch('/api/expenses/budget', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ budget })
+    });
+    loadChart();
+  }
+
+  loadMeta();
+  loadChart();
+</script>
+
+</body>
+</html>

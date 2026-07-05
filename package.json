@@ -1,0 +1,21 @@
+{
+  "name": "expense-tracker",
+  "version": "1.0.0",
+  "description": "Expense Tracker app demonstrating a full DevOps automation pipeline",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "jest --forceExit",
+    "lint": "eslint src tests"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.4",
+    "eslint": "^8.57.0"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}
