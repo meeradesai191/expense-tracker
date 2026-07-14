@@ -54,7 +54,7 @@ router.get('/export', (req, res) => {
 });
 
 // GET /api/budget — current monthly budget
-router.get('/budget', (req, res) => {
+router.'/budget', (req, res) => {
   res.json({ success: true, data: { budget: Budget.get() } });
 });
 
